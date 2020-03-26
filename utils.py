@@ -30,7 +30,7 @@ def load_model(args):
                    normalize=args.normalize)
 
     if args.inference:
-        model.load_state_dict(torch.load("SimCLR_{}.pth".format(args.backbone)))
+        model.load_state_dict(torch.load("SimCLR_{}_epoch90.pth".format(args.backbone)))
 
     model = model.to(args.device)
 

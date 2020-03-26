@@ -66,7 +66,8 @@ def run(args: DictConfig) -> None:
 
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        #transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
 
     if args.dataset == "STL10":
         train_dataset = torchvision.datasets.STL10(
@@ -75,7 +76,7 @@ def run(args: DictConfig) -> None:
         test_dataset = torchvision.datasets.STL10(
             root=args.data_dir, split="test", download=True, transform=torchvision.transforms.ToTensor()
         )
-    elif args.dataset == "CIFAR10":
+    elif args.dataset == "cifar10":
         train_dataset = torchvision.datasets.CIFAR10(
             root=args.data_dir, train=True, download=True, transform=transform
         )
@@ -108,16 +109,16 @@ def run(args: DictConfig) -> None:
     n_classes = 10  # stl-10
     model = LogisticRegression(simclr_model.n_features, n_classes).to(args.device)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     criterion = torch.nn.CrossEntropyLoss()
 
     for epoch in range(args.epochs):
-        loss_epoch, accuracy_epoch = run_epoch(args, train_loader, simclr_model, model, criterion, optimizer)
-        print(f"Epoch {epoch} Loss: {loss_epoch / len(train_loader)}\t Accuracy: {accuracy_epoch / len(train_loader)}")
+        loss, acc = run_epoch(args, train_loader, simclr_model, model, criterion, optimizer)
+        print('Epoch {}, loss: {:.4f}, acc: {:.4f}'.format(epoch, loss, acc))
 
     # final testing
-    loss_epoch, accuracy_epoch = run_epoch(args, test_loader, simclr_model, model, criterion)
-    print(f"[FINAL]\t Loss: {loss_epoch / len(test_loader)}\t Accuracy: {accuracy_epoch / len(test_loader)}")
+    loss, acc = run_epoch(args, test_loader, simclr_model, model, criterion)
+    print('Test loss: {:.4f}, acc: {:.4f}'.format(loss, acc))
 
 
 if __name__ == '__main__':

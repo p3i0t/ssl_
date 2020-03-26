@@ -60,28 +60,27 @@ def run_epoch(args, loader, simclr_model, model, criterion, optimizer=None):
     return loss_meter.avg, acc_meter.avg
 
 
-@hydra.main(config_path='config.yaml')
+@hydra.main(config_path='eval_config.yaml')
 def run(args: DictConfig) -> None:
-    args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    root = "./datasets"
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
     if args.dataset == "STL10":
         train_dataset = torchvision.datasets.STL10(
-            root, split="train", download=True, transform=torchvision.transforms.ToTensor()
+            root=args.data_dir, split="train", download=True, transform=torchvision.transforms.ToTensor()
         )
         test_dataset = torchvision.datasets.STL10(
-            root, split="test", download=True, transform=torchvision.transforms.ToTensor()
+            root=args.data_dir, split="test", download=True, transform=torchvision.transforms.ToTensor()
         )
     elif args.dataset == "CIFAR10":
         train_dataset = torchvision.datasets.CIFAR10(
-            root, train=True, download=True, transform=transform
+            root=args.data_dir, train=True, download=True, transform=transform
         )
         test_dataset = torchvision.datasets.CIFAR10(
-            root, train=False, download=True, transform=transform
+            root=args.data_dir, train=False, download=True, transform=transform
         )
     else:
         raise NotImplementedError
@@ -106,7 +105,6 @@ def run(args: DictConfig) -> None:
     simclr_model = simclr_model.to(args.device)
     simclr_model.eval()
 
-    ## Logistic Regression
     n_classes = 10  # stl-10
     model = LogisticRegression(simclr_model.n_features, n_classes).to(args.device)
 
@@ -120,3 +118,7 @@ def run(args: DictConfig) -> None:
     # final testing
     loss_epoch, accuracy_epoch = run_epoch(args, test_loader, simclr_model, model, criterion)
     print(f"[FINAL]\t Loss: {loss_epoch / len(test_loader)}\t Accuracy: {accuracy_epoch / len(test_loader)}")
+
+
+if __name__ == '__main__':
+    run()

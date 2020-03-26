@@ -74,3 +74,7 @@ def run(args: DictConfig) -> None:
         logger.info('Epoch {}, train_loss: {:.4f}'.format(epoch, train_loss))
         if epoch % 10 == 9:
             save_model(args, model, epoch + 1)
+
+
+if __name__ == '__main__':
+    run()

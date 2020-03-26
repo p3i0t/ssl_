@@ -22,7 +22,7 @@ batch_size: 256
 workers: 16
 epochs: 20
 
-inference: False
+inference: True
 
 # model options
 normalize: True

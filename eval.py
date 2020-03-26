@@ -62,7 +62,7 @@ def run_epoch(args, loader, simclr_model, model, criterion, optimizer=None):
 
 @hydra.main(config_path='eval_config.yaml')
 def run(args: DictConfig) -> None:
-    args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args.device = args.device if torch.cuda.is_available() else "cpu"
 
     transform = transforms.Compose([
         transforms.ToTensor(),

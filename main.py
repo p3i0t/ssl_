@@ -48,7 +48,7 @@ def train_epoch(args, train_loader, model, criterion, optimizer, scheduler=None)
 
 @hydra.main(config_path='config.yaml')
 def run(args: DictConfig) -> None:
-    args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args.device = args.device if torch.cuda.is_available() else "cpu"
 
     if args.dataset == "cifar10":
         train_dataset = datasets.CIFAR10(

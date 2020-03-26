@@ -24,7 +24,10 @@ class AverageMeter(object):
 
 
 def load_model(args):
-    model = SimCLR(backbone=args.backbone,  projection_dim=args.projection_dim, pretrained=args.pretrained)
+    model = SimCLR(backbone=args.backbone,
+                   projection_dim=args.projection_dim,
+                   pretrained=args.pretrained,
+                   normalize=args.normalize)
 
     if args.inference:
         model.load_state_dict(torch.load("SimCLR_{}.pth".format(args.backbone)))

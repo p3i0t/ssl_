@@ -44,3 +44,5 @@ temperature: 0.5 # see appendix B.7.: Optimal temperature under different batch 
 # logistic regression options
 logistic_batch_size: 256
 logistic_epochs: 100
+
+device: cuda

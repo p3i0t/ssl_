@@ -25,9 +25,10 @@ class SimCLR(nn.Module):
     to obtain hi = f(x ̃i) = ResNet(x ̃i) where hi ∈ Rd is the output after the average pooling layer.
     """
 
-    def __init__(self, backbone='resnet18', projection_dim=64, pretrained=False):
+    def __init__(self, backbone='resnet18', projection_dim=64, pretrained=False, normalize=True):
         super(SimCLR, self).__init__()
 
+        self.normalize = normalize
         self.encoder = get_model(name=backbone, pretrained=pretrained)
 
         self.n_features = self.encoder.fc.in_features  # get dimensions of fc layer
@@ -44,6 +45,6 @@ class SimCLR(nn.Module):
         h = self.encoder(x)
         z = self.projector(h)
 
-        if self.args.normalize:
+        if self.normalize:
             z = nn.functional.normalize(z, dim=1)
         return h, z
